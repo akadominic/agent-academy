@@ -127,6 +127,8 @@ export const progress = {
     withLesson(id, (l) => (l.sections[kind] ? l : { ...l, sections: { ...l.sections, [kind]: true } }));
   },
   markChallenge(id: string, key: string) {
+    // No-op if already recorded, so labs that report completion repeatedly cannot cause update loops.
+    if (state.lessons[id]?.challenges[key]) return;
     withLesson(id, (l) => ({ ...l, challenges: { ...l.challenges, [key]: true } }));
   },
   recordQuiz(id: string, result: Omit<QuizResult, "at">, isReview: boolean) {
@@ -147,6 +149,7 @@ export const progress = {
     update((s) => ({ ...s, labs: { ...s.labs, [labId]: Date.now() } }));
   },
   markProjectStep(projectId: string, step: string, done = true) {
+    if (Boolean(state.projects[projectId]?.steps[step]) === done) return;
     update((s) => {
       const p = s.projects[projectId] ?? { steps: {} };
       return { ...s, projects: { ...s.projects, [projectId]: { ...p, steps: { ...p.steps, [step]: done } } } };

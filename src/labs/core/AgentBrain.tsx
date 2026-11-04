@@ -96,7 +96,9 @@ export default function AgentBrain({ onComplete, challenge = "explore", initial 
   const [run, setRun] = useState<AgentRun | null>(null);
   const [tab, setTab] = useState<"what" | "request" | "call" | "state" | "done" | "code">("what");
   const [raw, setRaw] = useState(false);
-  const proof = useRef({ maxHit: false, guardHit: false, explored: false });
+  const proof = useRef({ maxHit: false, guardHit: false, explored: false, fired: false });
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
   const scenario = BRAIN_SCENARIOS.find((s) => s.id === scenarioId)!;
 
   useEffect(() => {
@@ -117,9 +119,12 @@ export default function AgentBrain({ onComplete, challenge = "explore", initial 
     if (ev.kind === "final") p.explored = true;
     if (scenario.id === "runaway" && ev.kind === "stopped") p.maxHit = true;
     if (scenario.id === "runaway" && ev.kind === "guard") p.guardHit = true;
-    if (challenge === "explore" && p.explored) onComplete?.("Followed a full agent run");
-    if (challenge === "runaway" && p.maxHit && p.guardHit) onComplete?.("Stopped a runaway loop two ways");
-  }, [ev, player.atEnd, scenario.id, challenge, onComplete]);
+    const done = (challenge === "explore" && p.explored) || (challenge === "runaway" && p.maxHit && p.guardHit);
+    if (done && !p.fired) {
+      p.fired = true;
+      onCompleteRef.current?.(challenge === "explore" ? "Followed a full agent run" : "Stopped a runaway loop two ways");
+    }
+  }, [ev, player.atEnd, scenario.id, challenge]);
 
   const lastRequest = useMemo(() => {
     for (let i = player.index; i >= 0; i--) if (trace[i]?.kind === "model_request") return trace[i].data as ModelRequest;
