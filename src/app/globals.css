@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  DESIGN TOKENS
+  -------------
+  Surfaces are warm "paper" in light mode and deep "ink" in dark mode.
+  Architecture colours are SEMANTIC and used identically in every diagram:
+    people  – users, UI, human approval      (orange)
+    model   – the language model             (violet)
+    tool    – tools, external APIs           (teal)
+    data    – state, memory, databases       (blue)
+    control – your code, loop, workflow      (ink/slate)
+    safety  – guards, errors, security       (rose)
+    cloud   – hosting & infrastructure       (sky)
+*/
+:root {
+  --bg: #f7f4ee;
+  --bg-raised: #fffdf9;
+  --bg-sunken: #efeae1;
+  --ink: #1d1b18;
+  --ink-2: #4a453e;
+  --ink-3: #7a736a;
+  --line: #e2dbcf;
+  --line-strong: #cfc6b7;
+  --accent: #b4530f;
+  --accent-ink: #ffffff;
+  --accent-soft: #f6e3d2;
+  --focus: #2563eb;
+
+  --c-people: #ea580c;
+  --c-model: #7c3aed;
+  --c-tool: #0d9488;
+  --c-data: #2563eb;
+  --c-control: #475569;
+  --c-safety: #e11d48;
+  --c-cloud: #0284c7;
+  --c-ok: #16a34a;
+  --c-warn: #d97706;
+
+  --code-bg: #1e1c1a;
+  --code-ink: #ece6dc;
+}
+
+:root.dark {
+  --bg: #121110;
+  --bg-raised: #1b1a18;
+  --bg-sunken: #0d0c0b;
+  --ink: #ece8e1;
+  --ink-2: #bdb6ab;
+  --ink-3: #8b8479;
+  --line: #2b2925;
+  --line-strong: #3b3833;
+  --accent: #f08a3e;
+  --accent-ink: #1b1209;
+  --accent-soft: #3a2414;
+  --focus: #60a5fa;
+
+  --c-people: #fb923c;
+  --c-model: #a78bfa;
+  --c-tool: #2dd4bf;
+  --c-data: #60a5fa;
+  --c-control: #94a3b8;
+  --c-safety: #fb7185;
+  --c-cloud: #38bdf8;
+  --c-ok: #4ade80;
+  --c-warn: #fbbf24;
+
+  --code-bg: #0c0b0a;
+  --code-ink: #e7e1d6;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-sunken: var(--bg-sunken);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-people: var(--c-people);
+  --color-model: var(--c-model);
+  --color-tool: var(--c-tool);
+  --color-data: var(--c-data);
+  --color-control: var(--c-control);
+  --color-safety: var(--c-safety);
+  --color-cloud: var(--c-cloud);
+  --color-ok: var(--c-ok);
+  --color-warn: var(--c-warn);
+  --color-code: var(--code-bg);
+  --color-code-ink: var(--code-ink);
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* Prose used for lesson text */
+.prose-lesson {
+  max-width: 74ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.prose-lesson p + p {
+  margin-top: 0.85em;
+}
+.prose-lesson code,
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.05em 0.35em;
+  overflow-wrap: anywhere;
+}
+
+/* "SIMULATED" hatch used on any mock system so it is never confused with reality */
+.sim-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--c-warn) 14%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+/* Animated data flow along SVG paths */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.flow-active {
+  stroke-dasharray: 6 6;
+  animation: dash-flow 0.8s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+.pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse-ring 1.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-active,
+  .pulse-ring {
+    animation: none;
+  }
+  * {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* CodeMirror sizing inside our editor frame */
+.cm-editor {
+  font-size: 14px;
+  height: 100%;
+}
+.cm-editor .cm-scroller {
+  font-family: var(--font-mono);
+}
+
+/* Highlighted lines in "Show me the code" */
+.code-line-hl {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
