@@ -77,6 +77,7 @@ Design principles: curriculum content is separate from presentation; there is on
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full, honest list. In short:
 
-- **Built:** Modules 0–7 (lessons, labs, quizzes, exercises), Projects 1–4, the Anatomy Explorer, the Agent Brain, the Tool Calling Lab, the Sandbox, the tutor, progress tracking, and the optional live AI routes.
+- **Built:** Modules 0–7, with 32 lessons, 22 interactive labs, 66 runnable code exercises, 175 quiz questions and a 178-term glossary. Also built: Projects 1–4, the Anatomy Explorer, the Agent Brain, the Tool Calling Lab, the cost calculator, the Sandbox, the tutor, progress tracking, and the optional live AI routes.
+- **Tested:** about 500 unit tests (the engine, the lab logic, every exercise's reference solution, and curriculum integrity) and 20 browser tests on the production build, at desktop and mobile widths.
 - **Outlined, not yet written:** Modules 8–19 (memory, RAG, integrations, workflows, evaluation, security, economics, interfaces, deployment, operations, advanced architectures, capstone), Projects 5–7 and the Capstone. Their pages say clearly that they are outlines.
 - **Not verified:** the live provider calls have not been run against real API keys in the build environment (see `docs/LIVE_AI.md`).

@@ -158,3 +158,36 @@ test("code exercises run in the sandboxed worker, and infinite loops are stopped
   await ex.getByRole("button", { name: /Run & check/ }).click();
   await expect(ex.getByText("hello from the worker").first()).toBeVisible();
 });
+
+test("agent brain challenge completes inside a lesson without crashing", async ({ page }) => {
+  await page.goto("/learn/m7/m7-l1");
+  const lab = page.locator('[data-lab="agent-brain"]').first();
+  await lab.scrollIntoViewIfNeeded();
+  const forward = lab.getByRole("button", { name: "Step forward" });
+  await expect(lab.getByText(/Event 1 \//)).toBeVisible();
+  while (await forward.isEnabled()) await forward.click();
+  await expect(lab.getByText("Challenge complete")).toBeVisible();
+  await expect(page.getByText("This lab crashed")).toHaveCount(0);
+});
+
+test("every built lesson and project page renders without errors", async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(`${page.url()}: ${e.message}`));
+  await page.goto("/learn");
+  const moduleLinks = await page.locator('a[href^="/learn/m"]').evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute("href")!))]);
+  for (const m of moduleLinks) {
+    await page.goto(m);
+    const lessons = await page.locator(`a[href^="${m}/"]`).evaluateAll((as) => [...new Set(as.map((a) => a.getAttribute("href")!))]);
+    for (const l of lessons) {
+      await page.goto(l);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page.getByText("This lab crashed")).toHaveCount(0);
+    }
+  }
+  for (const p of ["/projects/p1", "/projects/p2", "/projects/p3", "/projects/p4", "/glossary", "/progress", "/labs"]) {
+    await page.goto(p);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});
